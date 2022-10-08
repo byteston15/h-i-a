@@ -5,6 +5,7 @@ const {testDb} = require("./Config/testDb")
 const r_ciudad = require("./Routes/ciudad.js")
 const r_comuna = require("./Routes/comuna.js")
 const r_sucursal = require("./Routes/sucursal.js")
+const r_horario = require("./Routes/horario.js")
 
 
 //Instances
@@ -23,5 +24,6 @@ app.use(express.json())
 app.use(process.env.ROUTE, r_ciudad )
 app.use(process.env.ROUTE, r_comuna)
 app.use(process.env.ROUTE, r_sucursal)
+app.use(process.env.ROUTE, r_horario)
 app.listen(PORT, console.log(`Running on http://localhost:${PORT}`.grey))
 
