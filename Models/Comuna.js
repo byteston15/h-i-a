@@ -20,15 +20,19 @@ const Comuna = sq.define(
 );
 
 Comuna.hasMany(Sucursal, {
-  foreignKey: "fk_comuna_sucursal",
+  foreignKey: {
+    name: "fk_comuna_sucursal",
+    allowNull: false,
+  },
   sourceKey: "id_comuna",
-  allowNull: false,
 });
 
 Sucursal.belongsTo(Comuna, {
-  foreignKey: "fk_comuna_sucursal",
+  foreignKey: {
+    name: "fk_comuna_sucursal",
+    allowNull: false,
+  },
   targetKey: "id_comuna",
-  allowNull: false,
 });
 
 module.exports = Comuna;

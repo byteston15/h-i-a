@@ -1,12 +1,12 @@
-const sq = require("../Config/db.js");
+const sq = require("../Config/db");
 const { DataTypes } = require("sequelize");
 const Dia_Horario = require("../Models/Dia_Horario");
 
-const Horario = sq.define(
-  "Horario",
+const Dias = sq.define(
+  "Dias",
   {
-    id_horario: {
-      type: DataTypes.INTEGER(3),
+    id_dias: {
+      type: DataTypes.INTEGER(1),
       primaryKey: true,
       allowNull: false,
       autoIncrement: true,
@@ -14,7 +14,6 @@ const Horario = sq.define(
     nombre: {
       type: DataTypes.STRING(100),
       allowNull: false,
-      unique: true,
       set(val) {
         this.setDataValue("nombre", val.toUpperCase());
       },
@@ -23,19 +22,21 @@ const Horario = sq.define(
   { freezeTableName: true }
 );
 
-Horario.hasMany(Dia_Horario, {
+Dias.hasMany(Dia_Horario, {
   foreignKey: {
-    name: "fk_id_horario",
+    name: "fk_id_dia",
     allowNull: false,
   },
-  primaryKey: true,
-  sourceKey: "id_horario",
+  sourceKey: "id_dias",
 });
 
-Dia_Horario.belongsTo(Horario, {
-  foreignKey: { name: "fk_id_horario", allowNull: false },
+Dia_Horario.belongsTo(Dias, {
+  foreignKey: {
+    name: "fk_id_dia",
+    allowNull: false,
+  },
+  targetKey: "id_dias",
   primaryKey: true,
-  targetKey: "id_horario",
 });
 
-module.exports = Horario;
+module.exports = Dias;

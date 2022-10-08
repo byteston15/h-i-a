@@ -21,13 +21,19 @@ const Ciudad = sq.define(
 );
 
 Ciudad.hasMany(Comuna, {
-  foreignKey: "fk_ciudad_comuna",
+  foreignKey: {
+    name: "fk_ciudad_comuna",
+    allowNull: false,
+  },
   sourceKey: "id_ciudad",
   allowNull: false,
 });
 
 Comuna.belongsTo(Ciudad, {
-  foreignKey: "fk_ciudad_comuna",
+  foreignKey: {
+    name: "fk_ciudad_comuna",
+    allowNull: false,
+  },
   targetKey: "id_ciudad",
   allowNull: false,
 });
