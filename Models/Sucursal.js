@@ -1,5 +1,6 @@
 const sq = require("../Config/db.js");
 const { DataTypes } = require("sequelize");
+const Usuario = require("./Usuario");
 
 const Sucursal = sq.define(
   "Sucursal",
@@ -25,12 +26,34 @@ const Sucursal = sq.define(
     direccion: {
       type: DataTypes.STRING(300),
       allowNull: false,
+      validate: {
+        len: {
+          args: [8, 300],
+          msg: "La dirección debe tener 5 a 300 caracteres",
+        },
+      },
       set(val) {
         this.setDataValue("direccion", val.toUpperCase());
       },
     },
   },
-  { freezeTableName: true }
+  { freezeTableName: true, paranoid: true }
 );
+
+Sucursal.hasMany(Usuario, {
+  foreignKey: {
+    name: "fk_sucursal_usuario",
+    allowNull: true,
+  },
+  sourceKey: "id_sucursal",
+});
+
+Usuario.belongsTo(Sucursal, {
+  foreignKey: {
+    name: "fk_sucursal_usuario",
+    allowNull: true,
+  },
+  sourceKey: "id_sucursal",
+});
 
 module.exports = Sucursal;

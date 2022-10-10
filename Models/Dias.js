@@ -19,7 +19,7 @@ const Dias = sq.define(
       },
     },
   },
-  { freezeTableName: true }
+  { freezeTableName: true, timestamps: false }
 );
 
 Dias.hasMany(Dia_Horario, {

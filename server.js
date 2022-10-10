@@ -8,6 +8,7 @@ const r_sucursal = require("./Routes/sucursal.js");
 const r_horario = require("./Routes/horario.js");
 const r_dia_horario = require("./Routes/dia_horario");
 const r_dias = require("./Routes/dias");
+const r_tipo_registro = require("./Routes/tipo_registro");
 
 //Instances
 dotenv.config({ path: "./Config/config.env" });
@@ -26,5 +27,6 @@ app.use(process.env.ROUTE, r_sucursal);
 app.use(process.env.ROUTE, r_horario);
 app.use(process.env.ROUTE, r_dia_horario);
 app.use(process.env.ROUTE, r_dias);
+app.use(process.env.ROUTE, r_tipo_registro);
 
 app.listen(PORT, console.log(`Running on http://localhost:${PORT}`.grey));

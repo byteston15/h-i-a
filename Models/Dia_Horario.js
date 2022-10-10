@@ -21,7 +21,7 @@ const Dia_Horario = sq.define(
       allowNull: false,
     },
   },
-  { freezeTableName: true }
+  { freezeTableName: true, paranoid: true }
 );
 
 module.exports = Dia_Horario;

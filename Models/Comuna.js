@@ -16,7 +16,7 @@ const Comuna = sq.define(
       allowNull: true,
     },
   },
-  { freezeTableName: true }
+  { freezeTableName: true, timestamps: false }
 );
 
 Comuna.hasMany(Sucursal, {

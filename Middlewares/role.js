@@ -1,0 +1,1 @@
+//Redirect routes no allowed

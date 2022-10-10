@@ -17,7 +17,7 @@ const Ciudad = sq.define(
       unique: true,
     },
   },
-  { freezeTableName: true }
+  { freezeTableName: true, timestamps: false }
 );
 
 Ciudad.hasMany(Comuna, {
