@@ -1,17 +1,20 @@
-const Horario = require("../Models/Horario");
-const colors = require("colors");
+const Permiso = require("../Models/Registro");
+const sq = require("../Config/db");
 
-exports.createHorario = async (req, res, next) => {
+exports.createPermiso = async (req, res, next) => {
   try {
-    const horario = await Horario.create(req.body);
+    const t = sq.transaction();
+    const permiso = await Permiso.create(req.body);
+    await t.commit();
     res.status(201).json({
       success: true,
       data: {
-        horario: req.body,
+        permiso: req.body,
       },
     });
   } catch (err) {
     console.log(err.stack.underline.red);
+    await t.rollback();
     res.status(500).json({
       success: false,
       data: {
@@ -21,10 +24,11 @@ exports.createHorario = async (req, res, next) => {
   }
 };
 
-exports.getHorarios = async (req, res, next) => {
+exports.getPermisos = async (req, res, next) => {
   try {
-    const horario = await Horario.findAll();
-    if (!horario) {
+    //filter by date range and type register
+    const permiso = await Permiso.findAll();
+    if (!permiso) {
       return res.status(404).json({
         success: true,
         data: {
@@ -34,9 +38,9 @@ exports.getHorarios = async (req, res, next) => {
     }
     res.status(200).json({
       success: true,
-      length: horario.length,
+      length: permiso.length,
       data: {
-        horario,
+        permiso,
       },
     });
   } catch (err) {
@@ -50,23 +54,27 @@ exports.getHorarios = async (req, res, next) => {
   }
 };
 
-exports.updateHorario = async (req, res, next) => {
+exports.updatePermiso = async (req, res, next) => {
   try {
-    const horario = await Horario.update(req.params.id, {
-      where: { id_horario: req.params.id },
+    const t = sq.transaction();
+    const permiso = await Permiso.update(req.params.id, {
+      where: { id_permiso: req.params.id },
     });
-    if (!horario) {
+    if (!permiso) {
+      await t.rollback();
       return res
         .status(404)
-        .json({ success: true, data: { error: "No data" } });
+        .json({ success: false, data: { error: "No data" } });
     }
+    await t.commit();
     res.status(200).json({
       success: true,
       data: {
-        horario: req.body,
+        permiso: req.body,
       },
     });
   } catch (err) {
+    await t.rollback();
     console.log(err.stack.underline.red);
     res.status(500).json({
       success: false,
@@ -77,12 +85,14 @@ exports.updateHorario = async (req, res, next) => {
   }
 };
 
-exports.deleteHorario = async (req, res, next) => {
+exports.deletePermiso = async (req, res, next) => {
   try {
-    const horario = await Horario.destroy({
-      where: { id_horario: req.params.id },
+    const t = sq.transaction();
+    const permiso = await Permiso.destroy({
+      where: { id_permiso: req.params.id },
     });
-    if (!horario) {
+    if (!permiso) {
+      await t.rollback();
       return res.status(404).json({
         success: false,
         data: {
@@ -90,13 +100,15 @@ exports.deleteHorario = async (req, res, next) => {
         },
       });
     }
+    await t.commit();
     res.status(200).json({
       success: true,
       data: {
-        horario: {},
+        permiso: {},
       },
     });
   } catch (err) {
+    await t.rollback();
     console.log(err.stack.underline.red);
     res.status(500).json({ success: false, data: { error: err.message } });
   }

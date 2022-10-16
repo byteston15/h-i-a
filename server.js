@@ -9,6 +9,10 @@ const r_horario = require("./Routes/horario.js");
 const r_dia_horario = require("./Routes/dia_horario");
 const r_dias = require("./Routes/dias");
 const r_tipo_registro = require("./Routes/tipo_registro");
+const r_user = require("./Routes/usuario");
+const r_registro = require("./Routes/registro");
+const r_tipo_permiso = require("./Routes/tipo_permiso");
+const r_permiso = require("./Routes/permiso.js");
 
 //Instances
 dotenv.config({ path: "./Config/config.env" });
@@ -28,5 +32,9 @@ app.use(process.env.ROUTE, r_horario);
 app.use(process.env.ROUTE, r_dia_horario);
 app.use(process.env.ROUTE, r_dias);
 app.use(process.env.ROUTE, r_tipo_registro);
+app.use(process.env.ROUTE, r_user);
+app.use(process.env.ROUTE, r_registro);
+app.use(process.env.ROUTE, r_tipo_permiso);
+app.use(process.env.ROUTE, r_permiso);
 
 app.listen(PORT, console.log(`Running on http://localhost:${PORT}`.grey));

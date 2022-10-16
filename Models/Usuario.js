@@ -1,6 +1,8 @@
 const sq = require("../Config/db");
 const { DataTypes } = require("sequelize");
 const { encriptPass } = require("../Utils/passHelp");
+const Registro = require("./Registro");
+const Permiso = require("./Permiso");
 
 const Usuario = sq.define(
   "Usuario",
@@ -15,6 +17,9 @@ const Usuario = sq.define(
           msg: "Rut debe tener 8 a 9 caracteres",
         },
       },
+      set(val) {
+        this.setDataValue("rut", val.toUpperCase());
+      },
     },
     correo: {
       type: DataTypes.STRING(150),
@@ -27,10 +32,16 @@ const Usuario = sq.define(
     ap_paterno: {
       type: DataTypes.STRING(100),
       allowNull: false,
+      set(val) {
+        this.setDataValue("ap_paterno", val.toUpperCase());
+      },
     },
     ap_materno: {
       type: DataTypes.STRING(100),
       allowNull: false,
+      set(val) {
+        this.setDataValue("ap_materno", val.toUpperCase());
+      },
     },
     pass: {
       type: DataTypes.STRING(300),
@@ -51,5 +62,55 @@ const Usuario = sq.define(
   },
   { freezeTableName: true, paranoid: true }
 );
+
+Usuario.hasMany(Registro, {
+  foreignKey: {
+    name: "fk_user_registro",
+    allowNull: false,
+  },
+  sourceKey: "rut",
+});
+
+Registro.belongsTo(Usuario, {
+  foreignKey: {
+    name: "fk_user_registro",
+    allowNull: false,
+  },
+  targetKey: "rut",
+});
+
+Usuario.hasMany(Permiso, {
+  foreignKey: {
+    name: "fk_solicitante",
+    allowNull: false,
+  },
+  sourceKey: "rut",
+});
+
+Usuario.hasMany(Permiso, {
+  foreignKey: {
+    name: "fk_autoriza",
+    allowNull: true,
+    defaultValue: "",
+  },
+  sourceKey: "rut",
+});
+
+Permiso.belongsTo(Usuario, {
+  foreignKey: {
+    name: "fk_autoriza",
+    allowNull: true,
+    defaultValue: "",
+  },
+  targetKey: "rut",
+});
+
+Permiso.belongsTo(Usuario, {
+  foreignKey: {
+    name: "fk_solicitante",
+    allowNull: false,
+  },
+  targetKey: "rut",
+});
 
 module.exports = Usuario;

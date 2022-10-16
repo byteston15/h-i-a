@@ -1,5 +1,6 @@
 const sq = require("../Config/db");
 const { DataTypes } = require("sequelize");
+const Registro = require("./Registro");
 
 const Tipo_Registro = sq.define(
   "Tipo_Registro",
@@ -18,5 +19,21 @@ const Tipo_Registro = sq.define(
   },
   { freezeTableName: true, timestamps: false }
 );
+
+Tipo_Registro.hasMany(Registro, {
+  foreignKey: {
+    allowNull: false,
+    name: "fk_tpregistro_registro",
+  },
+  sourceKey: "id_tipo_registro",
+});
+
+Registro.belongsTo(Tipo_Registro, {
+  foreignKey: {
+    name: "fk_tpregistro_registro",
+    allowNull: false,
+  },
+  targetKey: "id_tipo_registro",
+});
 
 module.exports = Tipo_Registro;
