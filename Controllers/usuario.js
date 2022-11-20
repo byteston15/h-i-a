@@ -4,18 +4,18 @@ const sq = require("../Config/db");
 
 exports.createUser = async (req, res, next) => {
   try {
-    const t = sq.transaction();
-    const user = await Usuario.create(req.body);
-    await t.commit();
-    res.status(201).json({
-      sucess: true,
-      data: {
-        created: req.body,
-      },
+    const t = sq.transaction(async (t) => {
+      const user = await Usuario.create(req.body);
+      res.status(201).json({
+        sucess: true,
+        data: {
+          created: req.body,
+        },
+      });
+      return user;
     });
   } catch (err) {
     console.log(err.stack);
-    await t.rollback();
     res.status(500).json({
       sucess: true,
       data: {
@@ -49,25 +49,25 @@ exports.listUsers = async (req, res, next) => {
 
 exports.updateUser = async (req, res, next) => {
   try {
-    const t = sq.transaction();
-    const user = await Usuario.update(req.body, {
-      where: { rut: req.params.id },
-    });
-    if (!user) {
-      await t.rollback();
-      return res.status(404).json({
-        success: false,
-        error: "No data",
+    const t = sq.transaction(async (t) => {
+      const user = await Usuario.update(req.body, {
+        where: { rut: req.params.id },
       });
-    }
-    await t.commit();
-    res.status(200).json({
-      success: true,
-      data: req.body,
+      if (!user) {
+        await t.rollback();
+        return res.status(404).json({
+          success: false,
+          error: "No data",
+        });
+      }
+      res.status(200).json({
+        success: true,
+        data: req.body,
+      });
+      return user;
     });
   } catch (err) {
     console.log(err.stack);
-    await t.rollback();
     res.status(500).json({
       success: false,
       error: err.message,
@@ -77,23 +77,22 @@ exports.updateUser = async (req, res, next) => {
 
 exports.deleteUsuario = async (req, res, next) => {
   try {
-    const t = sq.transaction();
-    const user = await Usuario.destroy({
-      where: { rut: req.params.id },
-    });
-    if (!user) {
-      await t.rollback();
-      return res.status(404).json({
-        success: true,
-        data: {
-          error: "No data",
-        },
+    const t = sq.transaction(async (t) => {
+      const user = await Usuario.desbarratroy({
+        where: { rut: req.params.id },
       });
-    }
-
-    res.status(200).json({ success: true });
+      if (!user) {
+        return res.status(404).json({
+          success: true,
+          data: {
+            error: "No data",
+          },
+        });
+      }
+      res.status(200).json({ success: true });
+      return user;
+    });
   } catch (err) {
-    await t.rollback();
     console.log(err.stack.underline.red);
     res.status(500).json({
       success: false,

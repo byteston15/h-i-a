@@ -1,6 +1,6 @@
 const sq = require("../Config/db");
 const { DataTypes } = require("sequelize");
-const { encriptPass } = require("../Utils/passHelp");
+const encriptPass = require("../Utils/passHelp");
 const Registro = require("./Registro");
 const Permiso = require("./Permiso");
 
@@ -29,18 +29,11 @@ const Usuario = sq.define(
         is: /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/,
       },
     },
-    ap_paterno: {
+    nombre: {
       type: DataTypes.STRING(100),
       allowNull: false,
       set(val) {
-        this.setDataValue("ap_paterno", val.toUpperCase());
-      },
-    },
-    ap_materno: {
-      type: DataTypes.STRING(100),
-      allowNull: false,
-      set(val) {
-        this.setDataValue("ap_materno", val.toUpperCase());
+        this.setDataValue("nombre", val.toUpperCase());
       },
     },
     pass: {
