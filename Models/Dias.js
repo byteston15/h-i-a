@@ -1,6 +1,5 @@
 const sq = require("../Config/db");
 const { DataTypes } = require("sequelize");
-const Dia_Horario = require("../Models/Dia_Horario");
 
 const Dias = sq.define(
   "Dias",
@@ -21,22 +20,5 @@ const Dias = sq.define(
   },
   { freezeTableName: true, timestamps: false }
 );
-
-Dias.hasMany(Dia_Horario, {
-  foreignKey: {
-    name: "fk_id_dia",
-    allowNull: false,
-  },
-  sourceKey: "id_dias",
-});
-
-Dia_Horario.belongsTo(Dias, {
-  foreignKey: {
-    name: "fk_id_dia",
-    allowNull: false,
-  },
-  targetKey: "id_dias",
-  primaryKey: true,
-});
 
 module.exports = Dias;

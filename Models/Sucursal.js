@@ -26,6 +26,7 @@ const Sucursal = sq.define(
     direccion: {
       type: DataTypes.STRING(300),
       allowNull: false,
+      unique: true,
       validate: {
         len: {
           args: [8, 300],

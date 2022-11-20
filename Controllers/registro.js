@@ -3,18 +3,17 @@ const sq = require("../Config/db");
 
 exports.createRegistro = async (req, res, next) => {
   try {
-    const t = sq.transaction();
-    const registro = await Horario.create(req.body);
-    await t.commit();
-    res.status(201).json({
-      success: true,
-      data: {
-        registro: req.body,
-      },
+    const t = sq.transaction(async (t) => {
+      const registro = await Horario.create(req.body);
+      res.status(201).json({
+        success: true,
+        data: {
+          registro: req.body,
+        },
+      });
     });
   } catch (err) {
     console.log(err.stack.underline.red);
-    await t.rollback();
     res.status(500).json({
       success: false,
       data: {
@@ -56,25 +55,23 @@ exports.getRegistros = async (req, res, next) => {
 
 exports.updateRegistro = async (req, res, next) => {
   try {
-    const t = sq.transaction();
-    const registro = await registro.update(req.params.id, {
-      where: { id_registro: req.params.id },
-    });
-    if (!registro) {
-      await t.rollback();
-      return res
-        .status(404)
-        .json({ success: false, data: { error: "No data" } });
-    }
-    await t.commit();
-    res.status(200).json({
-      success: true,
-      data: {
-        registro: req.body,
-      },
+    const t = sq.transaction(async (t) => {
+      const registro = await registro.update(req.params.id, {
+        where: { id_registro: req.params.id },
+      });
+      if (!registro) {
+        return res
+          .status(404)
+          .json({ success: false, data: { error: "No data" } });
+      }
+      res.status(200).json({
+        success: true,
+        data: {
+          registro: req.body,
+        },
+      });
     });
   } catch (err) {
-    await t.rollback();
     console.log(err.stack.underline.red);
     res.status(500).json({
       success: false,
@@ -87,28 +84,27 @@ exports.updateRegistro = async (req, res, next) => {
 
 exports.deleteRegistro = async (req, res, next) => {
   try {
-    const t = sq.transaction();
-    const registro = await Registro.destroy({
-      where: { id_registro: req.params.id },
-    });
-    if (!registro) {
-      await t.rollback();
-      return res.status(404).json({
-        success: false,
+    const t = sq.transaction(async (t) => {
+      const registro = await Registro.destroy({
+        where: { id_registro: req.params.id },
+      });
+      if (!registro) {
+        return res.status(404).json({
+          success: false,
+          data: {
+            error: "no data",
+          },
+        });
+      }
+      res.status(200).json({
+        success: true,
         data: {
-          error: "no data",
+          registro: {},
         },
       });
-    }
-    await t.commit();
-    res.status(200).json({
-      success: true,
-      data: {
-        registro: {},
-      },
+      return registro;
     });
   } catch (err) {
-    await t.rollback();
     console.log(err.stack.underline.red);
     res.status(500).json({ success: false, data: { error: err.message } });
   }

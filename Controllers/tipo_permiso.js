@@ -4,17 +4,17 @@ const sq = require("../Config/db");
 
 exports.createTpermiso = async (req, res, next) => {
   try {
-    const t = sq.transaction();
-    const tpermiso = await Tipo_permiso.create(req.body);
-    await t.commit();
-    res.status(201).json({
-      success: true,
-      data: {
-        tipo_permiso: req.body,
-      },
+    const t = sq.transaction(async (t) => {
+      const tpermiso = await Tipo_permiso.create(req.body);
+      res.status(201).json({
+        success: true,
+        data: {
+          tipo_permiso: req.body,
+        },
+      });
+      return tpermiso;
     });
   } catch (err) {
-    await t.rollback();
     console.log(err.stack.underline.red);
     res.status(500).json({
       success: false,
@@ -56,17 +56,18 @@ exports.getTpermisos = async (req, res, next) => {
 
 exports.updateTpermiso = async (req, res, next) => {
   try {
-    const t = sq.transaction();
-    const tpermiso = await Tipo_permiso.update(req.params.id, {
-      where: { id_tipop: req.params.id },
+    const t = sq.transaction(async (t) => {
+      const tpermiso = await Tipo_permiso.update(req.params.id, {
+        where: { id_tipop: req.params.id },
+      });
+      if (!tpermiso) {
+        await t.rollback();
+        return res
+          .status(404)
+          .json({ success: false, data: { error: "No data" } });
+      }
+      return tpermiso;
     });
-    if (!tpermiso) {
-      await t.rollback();
-      return res
-        .status(404)
-        .json({ success: false, data: { error: "No data" } });
-    }
-    await t.commit();
     res.status(200).json({
       success: true,
       data: {
