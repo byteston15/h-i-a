@@ -4,13 +4,14 @@ const sq = require("../Config/db");
 exports.createRegistro = async (req, res, next) => {
   try {
     const t = sq.transaction(async (t) => {
-      const registro = await Horario.create(req.body);
+      const registro = await Registro.create(req.body);
       res.status(201).json({
         success: true,
         data: {
           registro: req.body,
         },
       });
+      return registro;
     });
   } catch (err) {
     console.log(err.stack.underline.red);
@@ -56,8 +57,10 @@ exports.getRegistros = async (req, res, next) => {
 exports.updateRegistro = async (req, res, next) => {
   try {
     const t = sq.transaction(async (t) => {
-      const registro = await registro.update(req.params.id, {
-        where: { id_registro: req.params.id },
+      const registro = await Registro.update(req.body, {
+        where: {
+          id_registro: req.params.id,
+        },
       });
       if (!registro) {
         return res
@@ -70,6 +73,7 @@ exports.updateRegistro = async (req, res, next) => {
           registro: req.body,
         },
       });
+      return registro;
     });
   } catch (err) {
     console.log(err.stack.underline.red);
@@ -95,6 +99,7 @@ exports.deleteRegistro = async (req, res, next) => {
             error: "no data",
           },
         });
+        return registro;
       }
       res.status(200).json({
         success: true,

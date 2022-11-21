@@ -57,11 +57,10 @@ exports.getTpermisos = async (req, res, next) => {
 exports.updateTpermiso = async (req, res, next) => {
   try {
     const t = sq.transaction(async (t) => {
-      const tpermiso = await Tipo_permiso.update(req.params.id, {
+      const tpermiso = await Tipo_permiso.update(req.body, {
         where: { id_tipop: req.params.id },
       });
       if (!tpermiso) {
-        await t.rollback();
         return res
           .status(404)
           .json({ success: false, data: { error: "No data" } });
@@ -75,7 +74,6 @@ exports.updateTpermiso = async (req, res, next) => {
       },
     });
   } catch (err) {
-    await t.rollback();
     console.log(err.stack.underline.red);
     res.status(500).json({
       success: false,
@@ -88,28 +86,26 @@ exports.updateTpermiso = async (req, res, next) => {
 
 exports.deleteTpermiso = async (req, res, next) => {
   try {
-    const t = sq.transaction();
-    const tpermiso = await Tipo_permiso.destroy({
-      where: { id_tipop: req.params.id },
-    });
-    if (!tpermiso) {
-      await t.rollback();
-      return res.status(404).json({
-        success: false,
+    const t = sq.transaction(async (t) => {
+      const tpermiso = await Tipo_permiso.destroy({
+        where: { id_tipop: req.params.id },
+      });
+      if (!tpermiso) {
+        return res.status(404).json({
+          success: false,
+          data: {
+            error: "no data",
+          },
+        });
+      }
+      res.status(200).json({
+        success: true,
         data: {
-          error: "no data",
+          horario: {},
         },
       });
-    }
-    await t.commit();
-    res.status(200).json({
-      success: true,
-      data: {
-        horario: {},
-      },
     });
   } catch (err) {
-    await t.rollback();
     console.log(err.stack.underline.red);
     res.status(500).json({ success: false, data: { error: err.message } });
   }

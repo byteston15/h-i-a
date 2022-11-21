@@ -1,5 +1,6 @@
 const sq = require("../Config/db");
 const { DataTypes } = require("sequelize");
+const Documento = require("./Documento");
 
 const Permiso = sq.define(
   "Permiso",
@@ -31,5 +32,21 @@ const Permiso = sq.define(
   },
   { freezeTableName: true, paranoid: true }
 );
+
+Permiso.hasMany(Documento, {
+  foreignKey: {
+    name: "fk_permiso",
+    allowNull: false,
+  },
+  sourceKey: "id_permiso",
+});
+
+Documento.belongsTo(Permiso, {
+  foreignKey: {
+    name: "fk_permiso",
+    allowNull: false,
+  },
+  targetKey: "id_permiso",
+});
 
 module.exports = Permiso;

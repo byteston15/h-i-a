@@ -84,7 +84,7 @@ Usuario.hasMany(Permiso, {
   foreignKey: {
     name: "fk_autoriza",
     allowNull: true,
-    defaultValue: "",
+    defaultValue: null,
   },
   sourceKey: "rut",
 });
@@ -93,7 +93,7 @@ Permiso.belongsTo(Usuario, {
   foreignKey: {
     name: "fk_autoriza",
     allowNull: true,
-    defaultValue: "",
+    defaultValue: null,
   },
   targetKey: "rut",
 });

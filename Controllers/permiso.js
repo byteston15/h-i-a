@@ -1,4 +1,4 @@
-const Permiso = require("../Models/Registro");
+const Permiso = require("../Models/Permiso");
 const sq = require("../Config/db");
 
 exports.createPermiso = async (req, res, next) => {
@@ -11,6 +11,7 @@ exports.createPermiso = async (req, res, next) => {
           permiso: req.body,
         },
       });
+      return permiso;
     });
   } catch (err) {
     console.log(err.stack.underline.red);
@@ -56,28 +57,25 @@ exports.getPermisos = async (req, res, next) => {
 exports.updatePermiso = async (req, res, next) => {
   try {
     const t = sq.transaction(async (t) => {
-      const permiso = await Permiso.update(req.params.id, {
+      const permiso = await Permiso.update(req.body, {
         where: { id_permiso: req.params.id },
       });
       if (!permiso) {
-        return res
-          .status(404)
-          .json({ success: false, data: { error: "No data" } });
+        return res.status(404).json({
+          success: false,
+          error: "No data",
+        });
       }
       res.status(200).json({
         success: true,
-        data: {
-          permiso: req.body,
-        },
+        data: req.body,
       });
+      return permiso;
     });
   } catch (err) {
-    console.log(err.stack.underline.red);
     res.status(500).json({
       success: false,
-      data: {
-        error: err.message,
-      },
+      error: err.message,
     });
   }
 };
@@ -102,6 +100,7 @@ exports.deletePermiso = async (req, res, next) => {
           permiso: {},
         },
       });
+      return permiso;
     });
   } catch (err) {
     console.log(err.stack.underline.red);

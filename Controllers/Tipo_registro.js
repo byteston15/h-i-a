@@ -1,5 +1,4 @@
 const Tipo_registro = require("../Models/Tipo_registro");
-const colors = require("colors");
 
 exports.getTipo_Registro = async (req, res, next) => {
   try {

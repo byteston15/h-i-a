@@ -2,28 +2,6 @@ const Documento = require("../Models/Documento");
 const colors = require("colors");
 const sq = require("../Config/db");
 
-exports.createDocumento = async (req, res, next) => {
-  try {
-    const t = sq.transaction(async (t) => {
-      const documento = await Documento.create(req.body);
-      res.status(201).json({
-        success: true,
-        data: {
-          documento: req.body,
-        },
-      });
-    });
-  } catch (err) {
-    console.log(err.stack.underline.red);
-    res.status(500).json({
-      success: false,
-      data: {
-        error: err.message,
-      },
-    });
-  }
-};
-
 exports.updateDocumento = async (req, res, next) => {
   try {
     const t = sq.transaction(async (t) => {
@@ -41,6 +19,7 @@ exports.updateDocumento = async (req, res, next) => {
           documento: req.body,
         },
       });
+      return documento;
     });
   } catch (err) {
     console.log(err.stack.underline.red);
@@ -66,6 +45,7 @@ exports.deleteDocumento = async (req, res, next) => {
             error: "no data",
           },
         });
+        return documento;
       }
       res.status(200).json({
         success: true,
