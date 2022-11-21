@@ -3,12 +3,11 @@ const colors = require("colors");
 
 exports.getTipo_Registro = async (req, res, next) => {
   try {
-    const tr = await Tipo_registro.findAll();
+    const tp = await Tipo_registro.findAll();
     res.status(200).json({
       success: true,
-      len: tr.length,
       data: {
-        tr,
+        tp,
       },
     });
   } catch (err) {
