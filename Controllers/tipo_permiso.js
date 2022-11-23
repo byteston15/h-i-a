@@ -1,6 +1,8 @@
 const Tipo_permiso = require("../Models/Tipo_permiso");
+const Permiso = require("../Models/Permiso");
 const colors = require("colors");
 const sq = require("../Config/db");
+const { json, where } = require("sequelize");
 
 exports.createTpermiso = async (req, res, next) => {
   try {
@@ -65,16 +67,15 @@ exports.updateTpermiso = async (req, res, next) => {
           .status(404)
           .json({ success: false, data: { error: "No data" } });
       }
+      res.status(200).json({
+        success: true,
+        update: req.body,
+      });
+
       return tpermiso;
     });
-    res.status(200).json({
-      success: true,
-      data: {
-        tpermiso: req.body,
-      },
-    });
   } catch (err) {
-    console.log(err.stack.underline.red);
+    console.log(err.stack);
     res.status(500).json({
       success: false,
       data: {
@@ -109,4 +110,22 @@ exports.deleteTpermiso = async (req, res, next) => {
     console.log(err.stack.underline.red);
     res.status(500).json({ success: false, data: { error: err.message } });
   }
+};
+
+exports.getPermisos = async (req, res, next) => {
+  try {
+    let whereObj = {
+      where: {
+        fk_tipopermiso_permiso: req.params.id,
+      },
+    };
+    const p1 = await Permiso.findAll(whereObj);
+    res.status(200).json({
+      success: true,
+      length: p1.length,
+      data: {
+        p1,
+      },
+    });
+  } catch (err) {}
 };

@@ -24,36 +24,6 @@ exports.createPermiso = async (req, res, next) => {
   }
 };
 
-exports.getPermisos = async (req, res, next) => {
-  try {
-    //filter by date range and type register
-    const permiso = await Permiso.findAll();
-    if (!permiso) {
-      return res.status(404).json({
-        success: true,
-        data: {
-          error: "No data",
-        },
-      });
-    }
-    res.status(200).json({
-      success: true,
-      length: permiso.length,
-      data: {
-        permiso,
-      },
-    });
-  } catch (err) {
-    console.log(err.stack.underline.red);
-    res.status(500).json({
-      success: false,
-      data: {
-        error: err.message,
-      },
-    });
-  }
-};
-
 exports.updatePermiso = async (req, res, next) => {
   try {
     const t = sq.transaction(async (t) => {
@@ -107,3 +77,5 @@ exports.deletePermiso = async (req, res, next) => {
     res.status(500).json({ success: false, data: { error: err.message } });
   }
 };
+
+exports.getDocumentBypermiso = async (req, res, next) => {};

@@ -51,6 +51,7 @@ const Usuario = sq.define(
     role: {
       type: DataTypes.ENUM,
       values: ["TOOR", "USER", "ADMIN"],
+      allowNull: false,
     },
   },
   { freezeTableName: true, paranoid: true }

@@ -7,19 +7,14 @@ const router = express.Router();
 const {
   createPermiso,
   deletePermiso,
-  getPermisos,
   updatePermiso,
   getDocumentoByPermiso, //id por documentos
 } = require("../Controllers/permiso");
 
-const {
-  createDocument,
-  deleteDocumento,
-  updateDocumento,
-} = require("../Controllers/documento");
+const { deleteDocumento } = require("../Controllers/documento");
 
-router.route("/permiso").get(getPermisos).post(createPermiso);
-router.route("/permiso/:id").delete(deletePermiso).put(updatePermiso);
+router.route("/permisos").post(createPermiso);
+router.route("/permisos/:id").delete(deletePermiso).put(updatePermiso);
 
 //files
 let storage = multer.diskStorage({
@@ -30,8 +25,11 @@ let storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+
+//Files routes
 router
-  .route("/permisos/:id")
+  .route("/permisos/:id/documento")
+  .delete(deleteDocumento)
   .post(upload.single("document"), async (req, res, next) => {
     try {
       const t = sq.transaction(async (t) => {
@@ -58,11 +56,8 @@ router
         },
       });
     }
-  });
+  })
+  .get();
 
-router
-  .route("/permiso/:id/documento")
-  .put(updateDocumento)
-  .delete(deleteDocumento);
-
+router.route("/permisos/documento/:iddoc").delete(deleteDocumento);
 module.exports = router;

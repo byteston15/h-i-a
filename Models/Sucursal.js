@@ -44,7 +44,7 @@ const Sucursal = sq.define(
 Sucursal.hasMany(Usuario, {
   foreignKey: {
     name: "fk_sucursal_usuario",
-    allowNull: true,
+    allowNull: false,
   },
   sourceKey: "id_sucursal",
 });
@@ -52,7 +52,7 @@ Sucursal.hasMany(Usuario, {
 Usuario.belongsTo(Sucursal, {
   foreignKey: {
     name: "fk_sucursal_usuario",
-    allowNull: true,
+    allowNull: false,
   },
   sourceKey: "id_sucursal",
 });

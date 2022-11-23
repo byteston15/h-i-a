@@ -28,7 +28,7 @@ const Horario = sq.define(
 Horario.hasMany(Usuario, {
   foreignKey: {
     name: "fk_horario_usuario",
-    allowNull: true,
+    allowNull: false,
   },
   sourceKey: "id_horario",
 });

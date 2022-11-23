@@ -1,6 +1,7 @@
 const Sucursal = require("../Models/Sucursal.js");
 const colors = require("colors");
 const sq = require("../Config/db");
+const Usuario = require("../Models/Usuario");
 
 exports.createSucursal = async (req, res, next) => {
   try {
@@ -92,6 +93,37 @@ exports.deleteSucursal = async (req, res, next) => {
     res.status(200).json({ success: true });
   } catch (err) {
     console.log(err.stack.underline.red);
+    res.status(500).json({
+      success: false,
+      data: {
+        error: err.message,
+      },
+    });
+  }
+};
+
+exports.getUserBySucursal = async (req, res, next) => {
+  try {
+    const u1 = await Usuario.findAll({
+      where: { fk_sucursal_usuario: req.params.id },
+    });
+    if (!u1) {
+      return res.status(404).json({
+        success: false,
+        data: {
+          error: "No data",
+        },
+      });
+    }
+    res.status(200).json({
+      success: true,
+      length: u1.length,
+      data: {
+        u1,
+      },
+    });
+  } catch (err) {
+    console.log(err.stack);
     res.status(500).json({
       success: false,
       data: {

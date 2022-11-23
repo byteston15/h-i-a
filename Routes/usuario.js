@@ -7,7 +7,7 @@ const {
   updateUser,
 } = require("../Controllers/usuario");
 
-router.route("/user").get(listUsers).post(createUser);
-router.route("/user/:id").delete(deleteUsuario).put(updateUser);
+router.route("/users").get(listUsers).post(createUser);
+router.route("/users/:id").delete(deleteUsuario).put(updateUser);
 
 module.exports = router;
