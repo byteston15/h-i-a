@@ -23,10 +23,6 @@ const Dia_Horario = sq.define(
           args: 120,
           msg: "El máximo es de 120 minutos",
         },
-        min: {
-          args: 30,
-          msg: "el minimo es de 30 minutos",
-        },
       },
     },
     tiempo_espera: {

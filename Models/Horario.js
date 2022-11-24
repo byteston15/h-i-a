@@ -54,9 +54,34 @@ Dias.belongsToMany(Horario, {
   through: Dia_Horario,
   primaryKey: true,
   allowNull: false,
-  name: "fk_dias",
   foreignKey: {
     name: "fk_dias",
+  },
+});
+
+Dias.hasMany(Dia_Horario, {
+  foreignKey: {
+    name: "fk_dias",
+    allowNull: false,
+  },
+});
+Dia_Horario.belongsTo(Dias, {
+  foreignKey: {
+    name: "fk_dias",
+    allowNull: false,
+  },
+});
+//
+Horario.hasMany(Dia_Horario, {
+  foreignKey: {
+    name: "fk_horario",
+    allowNull: false,
+  },
+});
+Dia_Horario.belongsTo(Horario, {
+  foreignKey: {
+    name: "fk_horario",
+    allowNull: false,
   },
 });
 

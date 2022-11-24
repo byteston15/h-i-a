@@ -8,12 +8,13 @@ const {
   createPermiso,
   deletePermiso,
   updatePermiso,
-  getDocumentoByPermiso, //id por documentos
+  getDocumentBypermiso, //id por documentos
+  getPermisos,
 } = require("../Controllers/permiso");
 
 const { deleteDocumento } = require("../Controllers/documento");
 
-router.route("/permisos").post(createPermiso);
+router.route("/permisos").post(createPermiso).get(getPermisos);
 router.route("/permisos/:id").delete(deletePermiso).put(updatePermiso);
 
 //files
@@ -27,9 +28,11 @@ let storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 //Files routes
+
+router.route("/permisos/documento/:id").delete(deleteDocumento);
 router
   .route("/permisos/:id/documento")
-  .delete(deleteDocumento)
+  .get(getDocumentBypermiso)
   .post(upload.single("document"), async (req, res, next) => {
     try {
       const t = sq.transaction(async (t) => {
@@ -59,5 +62,4 @@ router
   })
   .get();
 
-router.route("/permisos/documento/:iddoc").delete(deleteDocumento);
 module.exports = router;
