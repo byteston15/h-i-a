@@ -25,6 +25,42 @@ exports.createUser = async (req, res, next) => {
   }
 };
 
+exports.getUser = async (req, res, next) => {
+  try {
+    const u1 = await Usuario.findOne({
+      where: {
+        rut: req.params.id,
+      },
+    });
+    if (!u1) {
+      return res.status(404).json({
+        success: false,
+        data: {
+          error: {
+            message: "no data",
+          },
+        },
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data: {
+        u1,
+      },
+    });
+  } catch (err) {
+    console.log(err.stack);
+    res.status(500).json({
+      success: false,
+      data: {
+        error: {
+          message: err.message,
+        },
+      },
+    });
+  }
+};
+
 exports.listUsers = async (req, res, next) => {
   try {
     const usuario = await Usuario.findAll();

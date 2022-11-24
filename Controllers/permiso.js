@@ -106,7 +106,14 @@ exports.getPermisos = async (req, res, next) => {
     const queryVal = Object.assign(dateWhere, typeWhere);
     const permisos = await Permiso.findAll({
       where: queryVal,
-      attributes: ["id_permiso", "comienzo", "termino", "comentario", "estado"],
+      attributes: [
+        "id_permiso",
+        "comienzo",
+        "termino",
+        "comentario",
+        "estado",
+        "fk_autoriza",
+      ],
       include: [
         { model: Tipo_permiso, attributes: ["name", "id_tipop"] },
         { model: Usuario, attributes: ["nombre"] },
