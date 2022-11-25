@@ -14,21 +14,53 @@ exports.getReporteUsuario = async (req, res, next) => {
       attributes: {
         include: [
           [
+            sq.literal(
+              `(
+          select COUNT(*) 
+                      from Permiso
+                      where  
+                      Permiso.comienzo <= "${req.query.start} 00:00:00" OR Permiso.comienzo <= "${req.query.end}"
+                      AND Permiso.termino >= "${req.query.start} 00:00:00"
+                      and
+                      Permiso.fk_solicitante = Usuario.rut
+                      and
+                      Permiso.fk_tipopermiso_permiso = ${req.query.permiso}
+              )`
+            ),
+            "Cantidad permisos",
+          ],
+          [
             sq.literal(`(
-                SELECT COUNT(*)
+              SELECT COUNT(*)
                 FROM Permiso
                 WHERE 
-                    Permiso.fk_solicitante = Usuario.rut
-                    AND
-                    Permiso.fk_tipopermiso_permiso = ${req.query.vacaciones}
-                    AND
-                    ${req.query.start} BETWEEN
-                    Permiso.comienzo and Permiso.termino 
-                    OR
-                    ${req.query.end} BETWEEN
-                    Permiso.comienzo and Permiso.termino 
-        )`),
-            "vacaciones",
+                Permiso.comienzo <= "${req.query.start} 00:00:00" OR Permiso.comienzo <= "${req.query.end}"
+                AND Permiso.termino >= "${req.query.start} 00:00:00"
+                AND
+                Permiso.fk_solicitante = Usuario.rut
+                and
+                Permiso.fk_tipopermiso_permiso = ${req.query.vacacion}
+            )`),
+            "Cantidad vacaciones",
+          ],
+          [
+            sq.literal(`(
+               SELECT COUNT(*)
+                FROM Permiso
+                WHERE 
+                Permiso.comienzo <= "${req.query.start} 00:00:00" OR Permiso.comienzo <= "${req.query.end}"
+                AND Permiso.termino >= "${req.query.start} 00:00:00"
+                AND
+                Permiso.fk_solicitante = Usuario.rut
+                and
+                Permiso.fk_tipopermiso_permiso = ${req.query.licencia}
+            )`),
+            "Cantidad licencia",
+          ],
+          [
+            sq.literal(`(
+              
+            )`),
           ],
         ],
       },
