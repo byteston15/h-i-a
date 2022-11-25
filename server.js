@@ -13,6 +13,7 @@ const r_user = require("./Routes/usuario");
 const r_registro = require("./Routes/registro");
 const r_tipo_permiso = require("./Routes/tipo_permiso");
 const r_permiso = require("./Routes/permiso.js");
+const r_reporte = require("./Routes/reporte");
 
 //Instances
 dotenv.config({ path: "./Config/config.env" });
@@ -36,5 +37,6 @@ app.use(process.env.ROUTE, r_user);
 app.use(process.env.ROUTE, r_registro);
 app.use(process.env.ROUTE, r_tipo_permiso);
 app.use(process.env.ROUTE, r_permiso);
+app.use(process.env.ROUTE, r_reporte);
 
 app.listen(PORT, console.log(`Running on http://localhost:${PORT}`.grey));
