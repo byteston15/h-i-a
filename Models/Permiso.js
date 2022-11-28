@@ -12,11 +12,11 @@ const Permiso = sq.define(
       autoIncrement: true,
     },
     comienzo: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATE(6),
       allowNull: false,
     },
     termino: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATE(6),
       allowNull: false,
     },
     comentario: {

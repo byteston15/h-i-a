@@ -1,10 +1,4 @@
 const Usuario = require("../Models/Usuario");
-const Horario = require("../Models/Horario");
-const Dia_Horario = require("../Models/Dia_Horario");
-const Registro = require("../Models/Registro");
-const Sucursal = require("../Models/Sucursal");
-const Permiso = require("../Models/Permiso");
-const Tipo_permiso = require("../Models/Tipo_permiso");
 const sq = require("../Config/db");
 
 exports.getReporteUsuario = async (req, res, next) => {
@@ -24,7 +18,7 @@ exports.getReporteUsuario = async (req, res, next) => {
                       and
                       Permiso.fk_solicitante = Usuario.rut
                       and
-                      Permiso.fk_tipopermiso_permiso = ${req.query.permiso}
+                      Permiso.fk_tipopermiso_permiso = 1
               )`
             ),
             "Cantidad permisos",
@@ -39,7 +33,7 @@ exports.getReporteUsuario = async (req, res, next) => {
                 AND
                 Permiso.fk_solicitante = Usuario.rut
                 and
-                Permiso.fk_tipopermiso_permiso = ${req.query.vacacion}
+                Permiso.fk_tipopermiso_permiso = 2
             )`),
             "Cantidad vacaciones",
           ],
@@ -53,14 +47,45 @@ exports.getReporteUsuario = async (req, res, next) => {
                 AND
                 Permiso.fk_solicitante = Usuario.rut
                 and
-                Permiso.fk_tipopermiso_permiso = ${req.query.licencia}
+                Permiso.fk_tipopermiso_permiso = 3
             )`),
             "Cantidad licencia",
           ],
           [
             sq.literal(`(
-              
+              select round(SUM(TIME_TO_SEC(TIMEDIFF(time(r.registro), dh.ingreso))/60))
+              from Registro r 
+              join Dia_Horario dh 
+              on Usuario.fk_horario_usuario = dh.fk_horario 
+              where r.deletedAt is NULL
+              AND Usuario.deletedAt  is NULL
+              and dh.deletedAt is null
+              and time(r.registro) > dh.ingreso
+              and Usuario.fk_horario_usuario  = dh.fk_horario 
+              and r.fk_user_registro = Usuario.rut
+              and dh.fk_dias  =  DAYOFWEEK(r.registro)
+              and r.fk_tpregistro_registro = 1
+              and r.registro BETWEEN "${req.query.start} 00:00:00" and "${req.query.end} 00:00:00"
+            )            `),
+            "Minutos de atraso",
+          ],
+          [
+            sq.literal(`(
+              select round(SUM(TIME_TO_SEC(TIMEDIFF(time(r.registro), dh.ingreso))/60)) as 'Minutos de atrasos' 
+              from Registro r 
+              join Dia_Horario dh 
+              on Usuario.fk_horario_usuario = dh.fk_horario 
+              where r.deletedAt is NULL
+              AND Usuario.deletedAt  is NULL
+              and dh.deletedAt is null
+              and time(r.registro) > dh.salida
+              and Usuario.fk_horario_usuario  = dh.fk_horario 
+              and r.fk_user_registro = Usuario.rut
+              and dh.fk_dias  =  DAYOFWEEK(r.registro)
+              and r.fk_tpregistro_registro = 2
+              and r.registro BETWEEN "${req.query.start} 00:00:00" and "${req.query.end} 00:00:00"
             )`),
+            "Minutos hora",
           ],
         ],
       },

@@ -11,7 +11,7 @@ const Registro = sq.define(
       autoIncrement: true,
     },
     registro: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATE(6),
       allowNull: false,
     },
   },
