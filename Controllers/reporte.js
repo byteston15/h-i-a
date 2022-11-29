@@ -71,7 +71,7 @@ exports.getReporteUsuario = async (req, res, next) => {
           ],
           [
             sq.literal(`(
-              select round(SUM(TIME_TO_SEC(TIMEDIFF(time(r.registro), dh.ingreso))/60)) as 'Minutos de atrasos' 
+              select round(SUM(TIME_TO_SEC(TIMEDIFF(time(r.registro), dh.salida))/60))
               from Registro r 
               join Dia_Horario dh 
               on Usuario.fk_horario_usuario = dh.fk_horario 
@@ -83,10 +83,22 @@ exports.getReporteUsuario = async (req, res, next) => {
               and r.fk_user_registro = Usuario.rut
               and dh.fk_dias  =  DAYOFWEEK(r.registro)
               and r.fk_tpregistro_registro = 2
-              and r.registro BETWEEN "${req.query.start} 00:00:00" and "${req.query.end} 00:00:00"
+              and r.registro BETWEEN "${req.query.start} 00:00:00" and "${req.query.end} 00:00:00" 
             )`),
-            "Minutos hora",
+            "Minutos extras",
           ],
+          [
+            sq.literal(`(
+              
+            )`),
+            "Atrasos colación",
+          ],
+          /*[
+            sq.literal(`(
+            
+              )`),
+            "Tiempo extra colación",
+          ], */
         ],
       },
     });
