@@ -1,11 +1,26 @@
 const Usuario = require("../Models/Usuario");
+const Permiso = require("../Models/Permiso");
+const Horario = require("../Models/Horario");
+const Dia_Horario = require("../Models/Dia_Horario");
+
 const sq = require("../Config/db");
+const { Op, where } = require("sequelize");
+const Registro = require("../Models/Registro");
 
 exports.getReporteUsuario = async (req, res, next) => {
   try {
+    let whereObj = {};
+    if (req.query.rut) {
+      whereObj = {
+        rut: req.query.rut,
+      };
+    }
     console.log(req.query.start, req.query.end);
     const report = await Usuario.findAll({
+      where: whereObj,
+      order: ["fk_sucursal_usuario"],
       attributes: {
+        exclude: ["createdAt", "updatedAt", "deletedAt"],
         include: [
           [
             sq.literal(
@@ -87,21 +102,17 @@ exports.getReporteUsuario = async (req, res, next) => {
             )`),
             "Minutos extras",
           ],
-          [
-            sq.literal(`(
-              
-            )`),
-            "Atrasos colación",
-          ],
-          /*[
-            sq.literal(`(
-            
-              )`),
-            "Tiempo extra colación",
-          ], */
         ],
       },
     });
+    if (!report) {
+      return res.status(404).json({
+        success: false,
+        data: {
+          error: "no data",
+        },
+      });
+    }
     res.status(200).json({
       success: true,
       length: report.length,
@@ -117,6 +128,133 @@ exports.getReporteUsuario = async (req, res, next) => {
         error: {
           message: err.message,
         },
+      },
+    });
+  }
+};
+
+exports.getReportePermisosByUser = async (req, res, next) => {
+  try {
+    let whereObj = {};
+    if (!req.query.type) {
+      return res.status(400).json({
+        success: false,
+        data: {
+          error: "Debes entregar el query de type",
+        },
+      });
+    }
+    whereObj = {
+      fk_tipopermiso_permiso: req.query.type,
+      fk_solicitante: req.params.id,
+      [Op.or]: [
+        {
+          comienzo: {
+            [Op.lte]: req.query.start,
+          },
+        },
+        {
+          comienzo: {
+            [Op.lte]: req.query.end,
+          },
+        },
+      ],
+      [Op.and]: [
+        {
+          termino: {
+            [Op.gte]: req.query.start,
+          },
+        },
+      ],
+    };
+    const reporte = await Permiso.findAll({
+      attributes: [
+        "id_permiso",
+        "comienzo",
+        "termino",
+        "comentario",
+        "estado",
+        "fk_solicitante",
+        "fk_autoriza",
+      ],
+      where: whereObj,
+      include: [{ model: Usuario, attributes: ["rut", "nombre"] }],
+    });
+    if (!reporte) {
+      return res.status(404).json({
+        success: false,
+        data: {
+          error: "no data",
+        },
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data: {
+        reporte,
+      },
+    });
+  } catch (err) {
+    console.log(err.stack);
+    res.status(500).json({
+      success: false,
+      data: {
+        error: err.message,
+      },
+    });
+  }
+};
+
+exports.getAtrasosByuser = async (req, res, next) => {
+  try {
+    let whereObj = {};
+    //Validar si no hay querys
+
+    whereObj = {
+      "$Dia_Horario.ingreso": {
+        [Op.gt]: "$Registro.registro".split(" ")[1],
+      },
+    };
+    const reporte = await Registro.findAll({
+      where: whereObj,
+      attributes: {
+        exclude: ["createdAt", "deletedAt", "updatedAt"],
+      },
+      include: [
+        {
+          model: Usuario,
+          attributes: ["rut", "nombre"],
+          include: {
+            model: Horario,
+            attributes: ["id_horario"],
+            include: {
+              model: Dia_Horario,
+              attributes: ["ingreso", "salida"],
+            },
+          },
+        },
+      ],
+    });
+    if (!reporte) {
+      return res.status(404).json({
+        success: false,
+        data: {
+          error: "no data",
+        },
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data: {
+        reporte,
+      },
+    });
+  } catch (err) {
+    console.log(err.stack);
+    res.status(500).json({
+      success: false,
+      data: {
+        error: err.message,
       },
     });
   }

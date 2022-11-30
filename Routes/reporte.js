@@ -2,10 +2,14 @@ const express = require("express");
 const router = express.Router();
 const {
   getReporteUsuario,
-  getReporteSucursal,
+  getReportePermisosByUser,
+  getAtrasosByuser,
 } = require("../Controllers/reporte");
 
-router.route("/reporte/usuario").get(getReporteUsuario);
-router.route("/reporte/sucursales").get();
+router.route("/reporte/usuario/").get(getReporteUsuario);
+
+router.route("/reporte/usuario/:id").get(getReportePermisosByUser);
+
+router.route("/reporte/usuario/:id/atrasos").get(getAtrasosByuser);
 
 module.exports = router;
